@@ -41,7 +41,7 @@ namespace User.API
                 jsonError.Messaage = "发生了未知内部错误";
                 context.Result = new InternalServerErrorObjectResult(jsonError);
             }
-            _logger.LogError(context.Exception, jsonError.Messaage);
+            _logger.LogError(context.Exception, jsonError.Messaage+context.Exception.Message);
         }
     }
 

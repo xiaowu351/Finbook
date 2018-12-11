@@ -15,8 +15,11 @@ namespace User.API.Data
         {
 
         }
-
         public DbSet<AppUser> AppUsers { get; set; }
+
+        public DbSet<UserProperty> UserProperties { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +50,6 @@ namespace User.API.Data
             
         }
 
-       
+        
     }
 }

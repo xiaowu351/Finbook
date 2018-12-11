@@ -8,6 +8,8 @@ using User.API.Data;
 using User.API.Dtos;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.JsonPatch;
+using User.API.Models;
 
 namespace User.API.Controllers
 {
@@ -18,7 +20,7 @@ namespace User.API.Controllers
         private AppUserContext _userContext;
         private ILogger<UsersController> _logger;
 
-        private UserIdentity UserIdentity => new UserIdentity { UserId = 2, Name = "test" };
+        private UserIdentity UserIdentity => new UserIdentity { UserId =1, Name = "test" };
 
         public UsersController(AppUserContext userContext,ILogger<UsersController> logger)
         {
@@ -44,11 +46,45 @@ namespace User.API.Controllers
             
             return Json(user);
         }
-
+        /// <summary>
+        /// 有两种方式可以实现UserProperties属性的更新：
+        /// 1. 先删除原来，然后再插入最新的；（简单）
+        /// 2. 先查询原来的，然后对比最新的，再执行删除和插入；（复杂）以下是使用此方法的实现
+        /// </summary>
+        /// <param name="patchUser"></param>
+        /// <returns></returns>
         // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPatch]
+        public async Task<IActionResult> Patch([FromBody] JsonPatchDocument<AppUser> patchUser)
         {
+            var user = await _userContext.AppUsers 
+                                         .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId);
+            //查找原始记录
+            var originProperties = await _userContext.UserProperties.Where(up => up.AppUserId == user.Id).ToListAsync();
+
+            patchUser.ApplyTo(user);
+            //统计所有记录（新+旧）
+            var allProperties = originProperties.Union(user.Properties).Distinct();
+            //统计移除的记录
+            var removeProperties = originProperties.Except(user.Properties);
+            //统计添加的记录
+            var addProperties = allProperties.Except(originProperties);
+
+            foreach (var property in removeProperties)
+            {
+                _userContext.UserProperties.Remove(property);
+            }
+            foreach (var property in addProperties)
+            {
+                _userContext.UserProperties.Add(property);
+            }
+            
+            await _userContext.SaveChangesAsync();
+
+            
+            //返回内容待后续需求确定再修改
+            return Json(user);
+
         }
 
         // PUT api/values/5
