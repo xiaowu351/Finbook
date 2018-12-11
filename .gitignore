@@ -5,6 +5,5 @@ src/User.API/User.API.csproj.user
 .vs/Finbook/v15/Server/sqlite3/storage.ide
 .vs/Finbook/v15/Server/sqlite3/storage.ide-shm
 .vs/Finbook/v15/Server/sqlite3/storage.ide-wal
-src/User.API/obj
-src/User.API/bin
-
+src/User.API/obj/*
+src/User.API/bin/*

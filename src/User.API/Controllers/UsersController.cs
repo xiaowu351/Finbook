@@ -42,8 +42,7 @@ namespace User.API.Controllers
             {
                 //return NotFound();
                 throw new UserOperationException($"找不到用户上下文：{UserIdentity.UserId}");
-            }
-            
+            } 
             return Json(user);
         }
         /// <summary>
