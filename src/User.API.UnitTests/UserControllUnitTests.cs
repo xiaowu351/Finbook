@@ -21,7 +21,7 @@ namespace User.API.UnitTests
 
             userContext.AppUsers.Add(new Models.AppUser { Id = 1, Name = "test" });
             userContext.SaveChanges();
-
+               
             return userContext;
         }
 
