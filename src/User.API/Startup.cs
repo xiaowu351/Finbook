@@ -26,12 +26,14 @@ namespace User.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppUserContext>(options=>options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddDbContext<AppUserContext>(options => options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
+            services
+                .AddMvc(options => options.Filters.Add(typeof(GlobalExceptionFilter)))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -40,7 +42,7 @@ namespace User.API
 
             app.UseMvc();
 
-            AppUserContextSeed.SeedData(app,loggerFactory);
+            AppUserContextSeed.SeedData(app, loggerFactory);
         }
     }
 }
