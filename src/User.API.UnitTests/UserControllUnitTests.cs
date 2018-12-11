@@ -37,6 +37,8 @@ namespace User.API.UnitTests
             var response = await controller.Get();
 
             Assert.IsType<JsonResult>(response);
+
+
         }
     }
 }
