@@ -10,3 +10,7 @@ src/User.API/User.API.csproj.user
 
 /src/User.API.UnitTests/obj/Debug/netcoreapp2.1
 /src/User.API.UnitTests/bin/Debug/netcoreapp2.1
+src/User.API.UnitTests/obj/project.assets.json
+src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.cache
+src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.props
+src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
