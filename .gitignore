@@ -14,3 +14,9 @@ src/User.API.UnitTests/obj/project.assets.json
 src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.cache
 src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.props
 src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
+/src/BuildingBlocks/Resilience/Resilience.Http/bin/Debug/netcoreapp2.1
+/src/BuildingBlocks/Resilience/Resilience.Http/obj
+/src/Identity.API/bin/Debug/netcoreapp2.1
+/src/Identity.API/obj
+/src/Ocelot.API/bin/Debug/netcoreapp2.1
+/src/Ocelot.API/obj

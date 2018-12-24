@@ -20,9 +20,9 @@ namespace User.API.Controllers
         private AppUserContext _userContext;
         private ILogger<UsersController> _logger;
 
-        private UserIdentity UserIdentity => new UserIdentity { UserId =1, Name = "test" };
+        private UserIdentity UserIdentity => new UserIdentity { UserId = 1, Name = "test" };
 
-        public UsersController(AppUserContext userContext,ILogger<UsersController> logger)
+        public UsersController(AppUserContext userContext, ILogger<UsersController> logger)
         {
             _userContext = userContext;
             _logger = logger;
@@ -38,11 +38,11 @@ namespace User.API.Controllers
                                     .Include(u => u.Properties)
                                     .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId);
 
-            if(user is null)
+            if (user is null)
             {
                 //return NotFound();
                 throw new UserOperationException($"找不到用户上下文：{UserIdentity.UserId}");
-            } 
+            }
             return Json(user);
         }
         /// <summary>
@@ -56,7 +56,7 @@ namespace User.API.Controllers
         [HttpPatch]
         public async Task<IActionResult> Patch([FromBody] JsonPatchDocument<AppUser> patchUser)
         {
-            var user = await _userContext.AppUsers 
+            var user = await _userContext.AppUsers
                                          .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId);
             //查找原始记录
             var originProperties = await _userContext.UserProperties.Where(up => up.AppUserId == user.Id).ToListAsync();
@@ -77,14 +77,29 @@ namespace User.API.Controllers
             {
                 _userContext.UserProperties.Add(property);
             }
-            
+
             await _userContext.SaveChangesAsync();
 
-            
+
             //返回内容待后续需求确定再修改 
             return Json(user);
 
         }
+
+         
+        [HttpPost("check-or-addUser")]
+        public async Task<IActionResult> CheckOrAddUser(string phone)
+        {
+            var user =await _userContext.AppUsers.Where(u => u.Phone.Equals(phone)).SingleOrDefaultAsync();
+            if (user == null)
+            {
+                _userContext.AppUsers.Add(new AppUser { Phone=phone ,Name = phone});
+                await _userContext.SaveChangesAsync();
+            }
+            return Ok(user.Id);
+        }
+
+
 
         // PUT api/values/5
         [HttpPut("{id}")]
