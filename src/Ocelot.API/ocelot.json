@@ -10,7 +10,11 @@
         }
       ],
       "UpstreamPathTemplate": "/users",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
     }
 
   ],

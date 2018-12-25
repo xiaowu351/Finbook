@@ -18,7 +18,7 @@ namespace Identity.API
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource> {
-                new ApiResource("user.api","User Service")
+                new ApiResource("gateway_api","Gateway API")
             };
         }
 
@@ -42,7 +42,7 @@ namespace Identity.API
                      AllowedScopes = {
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OpenId,
-                        "user.api"
+                        "gateway_api" //Client拿到Token时，可以访问gateway_api的服务
                     },
                      AllowOfflineAccess = true, 
                      AlwaysIncludeUserClaimsInIdToken = true 
