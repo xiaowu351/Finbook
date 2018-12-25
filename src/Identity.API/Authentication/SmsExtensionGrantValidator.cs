@@ -1,23 +1,27 @@
 ﻿using Identity.API.Authentication;
+using Identity.API.Services;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
+using Resilience.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Identity.API
+namespace Identity.API.Authentication
 {
     public class SmsExtensionGrantValidator : IExtensionGrantValidator
     { 
+        private readonly IUserService _userService;
         private readonly IAuthCodeService _authCodeService;
 
         public string GrantType => "sms_auth_code";
 
-        public SmsExtensionGrantValidator(IAuthCodeService authCodeService)
-        {
+        public SmsExtensionGrantValidator(IAuthCodeService authCodeService,IUserService userService)
+        { 
             _authCodeService = authCodeService;
+            _userService = userService;
         }
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
@@ -32,28 +36,22 @@ namespace Identity.API
                 context.Result = errorGrantValidatorResult;
                 return;
             }
-
+            //检查验证码
             if(!await _authCodeService.ValidateAsync(phone, authCode))
             {
                 context.Result = errorGrantValidatorResult;
                 return;
             }
 
-            //HttpPost 请求user.api
-            HttpClient client = new HttpClient();
-            var bodyData = new Dictionary<string, string>();
-            bodyData.Add("phone", phone);
-            var from = new FormUrlEncodedContent(bodyData);
-            var response = await client.PostAsync("http://localhost:5000/api/users/check-or-addUser", from);
-
-            if(response.StatusCode == System.Net.HttpStatusCode.OK)
+            //完成用户注册与登录
+            var userId = await _userService.CheckOrAddUserAsync(phone);
+            if (userId <= 0)
             {
-
+                context.Result = errorGrantValidatorResult;
+                return;
             }
 
-            var result = await response.Content.ReadAsAsync<int>();
-
-            context.Result = new GrantValidationResult(result.ToString(), GrantType);
+            context.Result = new GrantValidationResult(userId.ToString(), GrantType);
             return; 
         }
     }

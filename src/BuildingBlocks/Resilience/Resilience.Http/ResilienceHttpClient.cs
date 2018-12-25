@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Wrap;
@@ -24,13 +25,15 @@ namespace Resilience.Http
         private readonly HttpClient _client;
         private readonly Func<string, IEnumerable<Policy>> _policyCreator;
         private readonly ILogger<ResilienceHttpClient> _logger;
-        private ConcurrentDictionary<string, PolicyWrap> _policyWrappers;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ConcurrentDictionary<string, PolicyWrap> _policyWrappers;
 
-        public ResilienceHttpClient(Func<string, IEnumerable<Policy>> policyCreator, ILogger<ResilienceHttpClient> logger)
+        public ResilienceHttpClient(Func<string, IEnumerable<Policy>> policyCreator, ILogger<ResilienceHttpClient> logger,IHttpContextAccessor httpContextAccessor)
         {
             _client = new HttpClient();
             _logger = logger;
             _policyCreator = policyCreator;
+            _httpContextAccessor = httpContextAccessor;
             _policyWrappers = new ConcurrentDictionary<string, PolicyWrap>();
         }
 
@@ -54,6 +57,7 @@ namespace Resilience.Http
             return await HttpInvoker(origin, async (context) =>
             {
                 var requestMessage = new HttpRequestMessage(method, uri);
+                SetAuthorizationHeader(requestMessage);
 
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(item), System.Text.Encoding.UTF8, "application/json");
 
@@ -106,6 +110,15 @@ namespace Resilience.Http
             var origin = $"{url.Scheme}://{url.DnsSafeHost}:{url.Port}";
 
             return origin;
+        }
+
+        private void SetAuthorizationHeader(HttpRequestMessage requestMessage)
+        {
+            var authorizationHeader = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            if (!string.IsNullOrEmpty(authorizationHeader))
+            {
+                requestMessage.Headers.Add("Authorization", new List<string>() { authorizationHeader });
+            }
         }
     }
 }

@@ -87,8 +87,8 @@ namespace User.API.Controllers
         }
 
          
-        [HttpPost("check-or-addUser")]
-        public async Task<IActionResult> CheckOrAddUser(string phone)
+        [HttpPost("check-or-create")]
+        public async Task<IActionResult> CheckOrCreate(string phone)
         {
             var user =await _userContext.AppUsers.Where(u => u.Phone.Equals(phone)).SingleOrDefaultAsync();
             if (user == null)

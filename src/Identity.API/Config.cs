@@ -18,7 +18,7 @@ namespace Identity.API
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource> {
-                new ApiResource("user.api","User Api")
+                new ApiResource("user.api","User Service")
             };
         }
 
@@ -32,9 +32,8 @@ namespace Identity.API
         {
             return new List<Client> {
                 new Client(){
-                     ClientId="user.api",
-                     ClientName="User API", 
-                     
+                     ClientId="android",
+                     ClientName="android",  
                     AllowedGrantTypes = {"sms_auth_code" },
                      ClientSecrets = new List<Secret>{
                          new Secret("secret".Sha256())
@@ -42,7 +41,8 @@ namespace Identity.API
                      
                      AllowedScopes = {
                         IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OpenId
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        "user.api"
                     },
                      AllowOfflineAccess = true, 
                      AlwaysIncludeUserClaimsInIdToken = true 

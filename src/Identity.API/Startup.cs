@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Identity.API.Authentication;
+using Identity.API.Infrastructure;
+using Identity.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Resilience.Http;
 
 namespace Identity.API
 {
@@ -32,7 +36,19 @@ namespace Identity.API
                     .AddInMemoryClients(Config.GetClients())
                     .AddInMemoryIdentityResources(Config.GetIdentityResources());
 
-            services.AddScoped<IAuthCodeService, TestAuthCodeServie>();
+            services.AddSingleton<IResilienceHttpClientFactory, ResilienceHttpClientFactory>(sp => {
+                var logger = sp.GetRequiredService<ILogger<ResilienceHttpClient>>();
+                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                var retryCount = 6;
+                var exceptionsAllowedBeforeBreaking = 5;
+                return new ResilienceHttpClientFactory(logger,httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking);
+            });
+            services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp=> sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
+            services.AddScoped<IAuthCodeService, SmsAuthCodeServie>()
+                    .AddScoped<IUserService, UserService>();
+
+            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
