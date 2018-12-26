@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using User.API.Data;
+using User.API.Extensions;
 
 namespace User.API
 {
@@ -33,7 +34,7 @@ namespace User.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -41,8 +42,8 @@ namespace User.API
             }
 
             app.UseMvc();
-
+            app.RegisterWithConsul(lifetime); 
             AppUserContextSeed.SeedData(app, loggerFactory);
-        }
+        } 
     }
 }
