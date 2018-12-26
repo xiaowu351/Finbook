@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Dtos\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -18,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BuildingBlocks\Resilience\Resilience.Http\Resilience.Http.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\ServiceDiscovery.Consul\ServiceDiscovery.Consul.csproj" />
   </ItemGroup>
 
 </Project>

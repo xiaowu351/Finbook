@@ -11,9 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ServiceDiscovery.Consul;
 using User.API.Data;
-using User.API.Dtos.Consul;
-using User.API.Extensions;
+
+
 
 namespace User.API
 {
@@ -30,18 +31,7 @@ namespace User.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.Configure<ServiceDiscoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
-            services.AddSingleton<IConsulClient>(sp => {
-                var client = new ConsulClient();
-                var serviceConfig = sp.GetRequiredService<IOptions<ServiceDiscoveryOptions>>().Value;
-
-                if (!string.IsNullOrWhiteSpace(serviceConfig.Consul.HttpEndpoint))
-                {
-                    //如果未配置，client将是使用默认的值：127.0.0.1:8500
-                    client.Config.Address = new Uri(serviceConfig.Consul.HttpEndpoint);
-                }
-                return client;
-            });
+            services.AddConsulServiceDiscovery(Configuration.GetSection("ServiceDiscovery")); 
 
             services.AddDbContext<AppUserContext>(options => options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
             services
@@ -50,7 +40,7 @@ namespace User.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -58,7 +48,7 @@ namespace User.API
             }
 
             app.UseMvc();
-            app.RegisterWithConsul(lifetime); 
+            app.UseConsulRegisterService();
             AppUserContextSeed.SeedData(app, loggerFactory);
         } 
     }

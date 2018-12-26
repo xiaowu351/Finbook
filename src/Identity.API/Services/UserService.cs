@@ -1,8 +1,8 @@
 ﻿using DnsClient;
-using Identity.API.Dtos.Consul;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resilience.Http;
+using ServiceDiscovery.Consul;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 namespace Identity.API.Services
 {
     public class UserService : IUserService
-    {
-        private readonly string _userServiceUrl = "http://localhost:5000";
+    { 
         private readonly ILogger<UserService> _logger;
         private readonly IHttpClient _httpClient;
         private readonly IDnsQuery _dns;
@@ -34,7 +33,7 @@ namespace Identity.API.Services
             var hostEntries = await _dns.ResolveServiceAsync("service.consul", _options.ServiceName);
             if(hostEntries == null || hostEntries.Length <= 0)
             {
-                var msg = $"在Service.consul:{_options.Consul.DnsEndpoint.ToIPEndPoint()}中未找到ServiceName={_options.ServiceName}";
+                var msg = $"在Service.consul:{_options.Consul.DnsEndpoint.ToIPEndPoint()} 中未找到 ServiceName={_options.ServiceName}";
                 _logger.LogWarning(msg);
                 throw new ArgumentNullException(nameof(_options.ServiceName),msg);
             }

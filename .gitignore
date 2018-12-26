@@ -20,3 +20,5 @@ src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
 /src/Identity.API/obj
 /src/Ocelot.API/bin/Debug/netcoreapp2.1
 /src/Ocelot.API/obj
+/src/BuildingBlocks/ServiceDiscovery.Consul/bin/Debug/netcoreapp2.1
+/src/BuildingBlocks/ServiceDiscovery.Consul/obj
