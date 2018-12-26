@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using DnsClient;
 using Identity.API.Authentication;
+using Identity.API.Dtos.Consul;
 using Identity.API.Infrastructure;
 using Identity.API.Services;
 using Microsoft.AspNetCore.Builder;
@@ -44,6 +47,14 @@ namespace Identity.API
                 return new ResilienceHttpClientFactory(logger,httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking);
             });
             services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp=> sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
+            //注册Consul服务配置
+            services.Configure<ServiceDiscoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
+            services.AddSingleton<IDnsQuery>(sp =>
+            {
+                var serviceConfig = sp.GetRequiredService<IOptions<ServiceDiscoveryOptions>>().Value;
+                return new LookupClient(serviceConfig.Consul.DnsEndpoint.ToIPEndPoint());
+            });
+
             services.AddScoped<IAuthCodeService, SmsAuthCodeServie>()
                     .AddScoped<IUserService, UserService>();
 
