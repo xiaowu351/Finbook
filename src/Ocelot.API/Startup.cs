@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
 
 namespace Ocelot.API
 {
@@ -37,7 +38,8 @@ namespace Ocelot.API
                         o.RequireHttpsMetadata = false;
                     });
 
-            services.AddOcelot();
+            services.AddOcelot()
+                    .AddConsul();
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

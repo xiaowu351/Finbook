@@ -18,7 +18,7 @@ namespace Identity.API.Infrastructure
         private readonly int _exceptionsAllowedBeforeBreaking;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ResilienceHttpClientFactory(ILogger<ResilienceHttpClient> logger,IHttpContextAccessor httpContextAccessor,int retryCount,int exceptionsAllowedBeforeBreaking)
+        public ResilienceHttpClientFactory(ILogger<ResilienceHttpClient> logger, IHttpContextAccessor httpContextAccessor, int retryCount, int exceptionsAllowedBeforeBreaking)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
@@ -38,20 +38,20 @@ namespace Identity.API.Infrastructure
                 .WaitAndRetryAsync(_retryCount,retryAttempt=> TimeSpan.FromSeconds(Math.Pow(2,retryAttempt)),
                 (ex,timespan,retryCount,context)=>{
                     var msg = $"第 {retryCount} 重试，重试策略" +
-                    $"of {context.PolicyKey}"+
-                    $"at {context.OperationKey}"+
-                    $"due to:{ex}";
+                    $" of {context.PolicyKey}"+
+                    $" at {context.OperationKey}"+
+                    $" due to:{ex}";
 
                     _logger.LogWarning(msg);
-                    _logger.LogDebug(msg);
+                    //_logger.LogDebug(msg);
                 }),
                 Policy.Handle<HttpRequestException>()
                       .CircuitBreakerAsync(_exceptionsAllowedBeforeBreaking,TimeSpan.FromMinutes(1),
                       (ex,duration)=>{
-                          _logger.LogTrace("Circuit breaker opened");
+                          _logger.LogTrace("熔断器打开");
                       },
                       ()=>{
-                          _logger.LogTrace("Circuit breaker reset");
+                          _logger.LogTrace("断路器复位");
                       })
             };
         }

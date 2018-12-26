@@ -3,14 +3,12 @@
     {
       "DownstreamPathTemplate": "/api/users",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5000
-        }
-      ],
+      "ServiceName": "UserService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
       "UpstreamPathTemplate": "/users",
       "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "finbookKey",
         "AllowedScopes": []
@@ -19,6 +17,11 @@
 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost"
+    "BaseUrl": "http://localhost",
+    "ServiceDiscoveryProvider": {
+      "Host": "localhost",
+      "Port": 8500,
+      "Type": "Consul"
+    }
   }
 }
