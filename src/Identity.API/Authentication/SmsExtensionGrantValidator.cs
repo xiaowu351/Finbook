@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 namespace Identity.API.Authentication
 {
     public class SmsExtensionGrantValidator : IExtensionGrantValidator
-    { 
+    {
         private readonly IUserService _userService;
         private readonly IAuthCodeService _authCodeService;
 
         public string GrantType => "sms_auth_code";
 
-        public SmsExtensionGrantValidator(IAuthCodeService authCodeService,IUserService userService)
-        { 
+        public SmsExtensionGrantValidator(IAuthCodeService authCodeService, IUserService userService)
+        {
             _authCodeService = authCodeService;
             _userService = userService;
         }
@@ -32,13 +32,13 @@ namespace Identity.API.Authentication
 
             var errorGrantValidatorResult = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
 
-            if(string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(authCode))
+            if (string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(authCode))
             {
                 context.Result = errorGrantValidatorResult;
                 return;
             }
             //检查验证码
-            if(!await _authCodeService.ValidateAsync(phone, authCode))
+            if (!await _authCodeService.ValidateAsync(phone, authCode))
             {
                 context.Result = errorGrantValidatorResult;
                 return;
@@ -53,14 +53,14 @@ namespace Identity.API.Authentication
             }
 
             var claims = new Claim[] {
-                new Claim(nameof(user.Name),user.Name??string.Empty),
-                new Claim(nameof(user.Company),user.Company??string.Empty),
-                new Claim(nameof(user.Title),user.Title??string.Empty),
-                new Claim(nameof(user.Avatar),user.Avatar??string.Empty),
+                new Claim(nameof(user.Name).ToLower(),user.Name??string.Empty),
+                new Claim(nameof(user.Company).ToLower(),user.Company??string.Empty),
+                new Claim(nameof(user.Title).ToLower(),user.Title??string.Empty),
+                new Claim(nameof(user.Avatar).ToLower(),user.Avatar??string.Empty),
             };
 
-            context.Result = new GrantValidationResult(user.Id.ToString(), GrantType,claims);
-            return; 
+            context.Result = new GrantValidationResult(user.Id.ToString(), GrantType, claims);
+            return;
         }
     }
 }
