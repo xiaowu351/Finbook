@@ -32,6 +32,8 @@ namespace Identity.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<DependencyServiceDiscoverySettings>(Configuration.GetSection(nameof(DependencyServiceDiscoverySettings)));
+
             services.AddIdentityServer()
                     .AddDeveloperSigningCredential()
                     .AddExtensionGrantValidator<SmsExtensionGrantValidator>()
@@ -48,7 +50,7 @@ namespace Identity.API
             });
             services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp=> sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
             //注册Consul服务配置
-            services.AddConsulServiceDiscovery(Configuration.GetSection("ServiceDiscovery"));
+            services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
 
             services.AddScoped<IAuthCodeService, SmsAuthCodeServie>()
                     .AddScoped<IUserService, UserService>();
@@ -66,7 +68,8 @@ namespace Identity.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseIdentityServer();
+            app.UseConsulRegisterService();
+            app.UseIdentityServer(); 
             app.UseMvc();
         }
     }

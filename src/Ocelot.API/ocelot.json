@@ -1,5 +1,6 @@
 {
   "ReRoutes": [
+    // UserService服务路由
     {
       "DownstreamPathTemplate": "/api/users",
       "DownstreamScheme": "http",
@@ -9,7 +10,33 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "AuthenticationOptions": {
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    // IdentityService服务路由
+    {
+      "DownstreamPathTemplate": "/connect/token",
+      "DownstreamScheme": "http",
+      "ServiceName": "IdentityService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "UpstreamPathTemplate": "/token",
+      "UpstreamHttpMethod": [ "Post" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    // ContactService服务路由
+    {
+      "DownstreamPathTemplate": "/api/contacts/apply-requests",
+      "DownstreamScheme": "http",
+      "ServiceName": "ContactService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "UpstreamPathTemplate": "/contacts/apply-requests",
+      "UpstreamHttpMethod": [ "Post" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
         "AuthenticationProviderKey": "finbookKey",
         "AllowedScopes": []
       }

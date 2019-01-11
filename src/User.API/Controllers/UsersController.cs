@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.JsonPatch;
 using User.API.Models;
+using System.Collections;
+using User.API.ViewModels;
 
 namespace User.API.Controllers
 {
@@ -86,31 +88,62 @@ namespace User.API.Controllers
 
         }
 
-         
+
         [HttpPost("check-or-create")]
-        public async Task<IActionResult> CheckOrCreate(string phone)
+        public async Task<IActionResult> CheckOrCreate([FromBody]CheckOrCreateInputViewModel viewModel)
         {
-            var user =await _userContext.AppUsers.Where(u => u.Phone.Equals(phone)).SingleOrDefaultAsync();
+            var user = await _userContext.AppUsers.Where(u => u.Phone.Equals(viewModel.Phone)).SingleOrDefaultAsync();
             if (user == null)
             {
-                _userContext.AppUsers.Add(new AppUser { Phone=phone ,Name = phone});
+                _userContext.AppUsers.Add(new AppUser { Phone = viewModel.Phone, Name = viewModel.Phone });
                 await _userContext.SaveChangesAsync();
             }
             return Ok(user.Id);
         }
 
 
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        /// <summary>
+        /// 获取用户标签列表
+        /// </summary>      
+        /// <returns></returns> 
+        [HttpGet("tags")]
+        public async Task<IActionResult> GetUserTags()
         {
+            return Ok(await _userContext.UserTags.Where(u => u.AppUserId == UserIdentity.UserId).ToListAsync());
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        /// <summary>
+        /// 通过手机号搜索
+        /// </summary>
+        /// <param name="phone"></param>
+        [HttpPost("search")]
+        public async Task<IActionResult> Search([FromBody]SearchInputViewModel viewModel)
         {
+            return Ok(await _userContext.AppUsers.Include(u => u.Properties).SingleOrDefaultAsync(u => u.Phone == viewModel.Phone));
+        }
+
+        /// <summary>
+        /// 更新用户标签列表
+        /// </summary>       
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        [HttpPut("tags")]
+        public async Task<IActionResult> UpdateUserTags([FromBody]List<string> tags)
+        {
+            var originTags = await _userContext.UserTags.Where(u => u.AppUserId == UserIdentity.UserId).Select(t => t.Tag).ToListAsync();
+
+            var newTags = tags.Except(originTags);
+
+            _userContext.UserTags.AddRange(newTags.Select(t => new UserTag
+            {
+                AppUserId = UserIdentity.UserId,
+                Tag = t,
+                CreateTime = DateTime.Now
+            }));
+
+            await _userContext.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

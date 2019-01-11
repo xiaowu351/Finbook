@@ -17,25 +17,27 @@ namespace Identity.API.Services
         private readonly IHttpClient _httpClient;
         private readonly IDnsQuery _dns;
         private readonly ServiceDiscoveryOptions _options;
+        private readonly DependencyServiceDiscoverySettings _dependencyService;
 
-        public UserService(ILogger<UserService> logger,IHttpClient httpClient,IDnsQuery dns,IOptions<ServiceDiscoveryOptions> options)
+        public UserService(ILogger<UserService> logger,IHttpClient httpClient,IDnsQuery dns,IOptions<ServiceDiscoveryOptions> options,IOptions<DependencyServiceDiscoverySettings> dependencyService)
         {
             _logger = logger;
             _httpClient = httpClient;
             _dns = dns;
             _options = options.Value;
+            _dependencyService = dependencyService.Value;
         }
 
 
         public async Task<int> CheckOrAddUserAsync(string phone)
         {
 
-            var hostEntries = await _dns.ResolveServiceAsync("service.consul", _options.ServiceName);
+            var hostEntries = await _dns.ResolveServiceAsync("service.consul", _dependencyService.UserServiceName);
             if(hostEntries == null || hostEntries.Length <= 0)
             {
-                var msg = $"在Service.consul:{_options.Consul.DnsEndpoint.ToIPEndPoint()} 中未找到 ServiceName={_options.ServiceName}";
+                var msg = $"在Service.consul:{_options.Consul.DnsEndpoint.ToIPEndPoint()} 中未找到 ServiceName={_dependencyService.UserServiceName}";
                 _logger.LogWarning(msg);
-                throw new ArgumentNullException(nameof(_options.ServiceName),msg);
+                throw new ArgumentNullException(nameof(_dependencyService.UserServiceName),msg);
             }
             var hostEntry = hostEntries.First();
                    

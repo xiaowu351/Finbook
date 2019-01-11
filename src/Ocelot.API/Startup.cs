@@ -27,10 +27,15 @@ namespace Ocelot.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.Configure<IdentityClientSettings>(Configuration.GetSection(nameof(IdentityClientSettings)));
+            
+            var clientSettings = services.BuildServiceProvider().GetRequiredService<IOptions<IdentityClientSettings>>().Value;
             //这里启用IdentityServer4进行认证和鉴权
             services.AddAuthentication()
                     .AddIdentityServerAuthentication("finbookKey", o =>
                     {
+                             
                         o.Authority = "http://localhost:8000";
                         o.ApiName = "gateway_api";
                         o.ApiSecret = "secret";

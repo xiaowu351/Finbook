@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Consul;
+using Contact.API.Data;
+using Contact.API.Exceptions;
+using Contact.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceDiscovery.Consul;
-using User.API.Data;
 
-
-
-namespace User.API
+namespace Contact.API
 {
     public class Startup
     {
@@ -30,26 +28,25 @@ namespace User.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
-            services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions))); 
-
-            services.AddDbContext<AppUserContext>(options => options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
-            services
-                .AddMvc(options => options.Filters.Add(typeof(GlobalExceptionFilter)))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<AppSettings>(Configuration);
+            services.AddScoped(typeof(ContactContext));
+            services.AddScoped<IContactApplyRequestRepository, MongoContactApplyRequestRepository>();
+            services.AddScoped<IContactRepository, MongoContactRepository>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
+            services.AddMvc(options => options.Filters.Add(typeof(GlobalExceptionFilter)))
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMvc();
             app.UseConsulRegisterService();
-            AppUserContextSeed.SeedData(app, loggerFactory);
-        } 
+            app.UseMvc();
+        }
     }
 }

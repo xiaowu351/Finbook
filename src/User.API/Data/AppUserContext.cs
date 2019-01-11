@@ -19,6 +19,8 @@ namespace User.API.Data
 
         public DbSet<UserProperty> UserProperties { get; set; }
 
+        public DbSet<UserTag>  UserTags { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

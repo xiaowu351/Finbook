@@ -15,6 +15,9 @@ namespace ServiceDiscovery.Consul
 
         public ConsulOptions Consul { get; set; }
 
+        /// <summary>
+        /// 指定注册服务的自身实际使用的uri地址
+        /// </summary>
         public string[] Endpoints { get; set; }
 
         public string HealthCheckTemplate { get; set; }
