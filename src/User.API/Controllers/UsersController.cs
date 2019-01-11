@@ -98,7 +98,13 @@ namespace User.API.Controllers
                 _userContext.AppUsers.Add(new AppUser { Phone = viewModel.Phone, Name = viewModel.Phone });
                 await _userContext.SaveChangesAsync();
             }
-            return Ok(user.Id);
+            return Ok(new {
+                user.Id,
+                user.Name,
+                user.Company,
+                user.Title,
+                user.Avatar
+            });
         }
 
 

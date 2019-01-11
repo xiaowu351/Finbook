@@ -7,6 +7,7 @@ using DnsClient;
 using Identity.API.Authentication;
 using Identity.API.Infrastructure;
 using Identity.API.Services;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,8 @@ namespace Identity.API
                     .AddInMemoryApiResources(Config.GetApiResources())
                     .AddInMemoryClients(Config.GetClients())
                     .AddInMemoryIdentityResources(Config.GetIdentityResources());
+
+            services.AddScoped<IProfileService, ProfileService>();
 
             services.AddSingleton<IResilienceHttpClientFactory, ResilienceHttpClientFactory>(sp => {
                 var logger = sp.GetRequiredService<ILogger<ResilienceHttpClient>>();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Identity.API.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,6 @@ namespace Identity.API.Services
         /// </summary>
         /// <param name="phone"></param>
         /// <returns></returns>
-        Task<int> CheckOrAddUserAsync(string phone);
+        Task<UserInfo> CheckOrAddUserAsync(string phone);
     }
 }

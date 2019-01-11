@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Identity.API.Authentication
@@ -44,14 +45,21 @@ namespace Identity.API.Authentication
             }
 
             //完成用户注册与登录
-            var userId = await _userService.CheckOrAddUserAsync(phone);
-            if (userId <= 0)
+            var user = await _userService.CheckOrAddUserAsync(phone);
+            if (user == null)
             {
                 context.Result = errorGrantValidatorResult;
                 return;
             }
 
-            context.Result = new GrantValidationResult(userId.ToString(), GrantType);
+            var claims = new Claim[] {
+                new Claim(nameof(user.Name),user.Name??string.Empty),
+                new Claim(nameof(user.Company),user.Company??string.Empty),
+                new Claim(nameof(user.Title),user.Title??string.Empty),
+                new Claim(nameof(user.Avatar),user.Avatar??string.Empty),
+            };
+
+            context.Result = new GrantValidationResult(user.Id.ToString(), GrantType,claims);
             return; 
         }
     }

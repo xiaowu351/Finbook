@@ -1,4 +1,5 @@
 ﻿using DnsClient;
+using Identity.API.Dtos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resilience.Http;
@@ -29,7 +30,7 @@ namespace Identity.API.Services
         }
 
 
-        public async Task<int> CheckOrAddUserAsync(string phone)
+        public async Task<UserInfo> CheckOrAddUserAsync(string phone)
         {
 
             var hostEntries = await _dns.ResolveServiceAsync("service.consul", _dependencyService.UserServiceName);
@@ -45,9 +46,9 @@ namespace Identity.API.Services
             var response =await _httpClient.PostAsync($"http://{hostEntry.HostName}:{hostEntry.Port}/api/users/check-or-create", data);
             if(response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return await response.Content.ReadAsAsync<int>();
+                return await response.Content.ReadAsAsync<UserInfo>();
             } 
-            return 0; 
+            return null; 
         }
     }
 }
