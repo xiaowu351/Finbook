@@ -8,7 +8,7 @@ namespace Contact.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class HealthCheckController : Controller
+    public class HealthCheckController : BaseController
     {
         [HttpGet]
         public IActionResult Ping()

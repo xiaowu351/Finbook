@@ -38,10 +38,7 @@ namespace Resilience.Http
         }
 
 
-        public async Task<HttpResponseMessage> PostAsync<T>(string uri, T item, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")
-        {
-            return await  DoPostPutAsync<T>(HttpMethod.Post ,uri,item,authorizationToken,requestId,authorizationMethod);
-        }
+        
 
         private async Task<HttpResponseMessage> DoPostPutAsync<T>(HttpMethod method, string uri, T item, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")
         {
@@ -119,6 +116,58 @@ namespace Resilience.Http
             {
                 requestMessage.Headers.Add("Authorization", new List<string>() { authorizationHeader });
             }
+        }
+
+        public async Task<HttpResponseMessage> PostAsync<T>(string uri, T item, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")
+        {
+            return await DoPostPutAsync<T>(HttpMethod.Post, uri, item, authorizationToken, requestId, authorizationMethod);
+        }
+
+        public async Task<string> GetStringAsync(string uri, string authorizationToken = null, string authorizationMethod = "Bearer")
+        {
+            var origin = GetOriginFromUri(uri);
+
+            return await HttpInvoker(origin, async (context) =>
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                SetAuthorizationHeader(requestMessage);
+
+                if (authorizationToken != null)
+                {
+                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(authorizationMethod, authorizationToken);
+                }
+
+                var response = await _client.SendAsync(requestMessage);
+
+                return await response.Content.ReadAsStringAsync();
+            });
+        }
+
+        public async Task<HttpResponseMessage> DeleteAsync(string uri, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")
+        {
+            var origin = GetOriginFromUri(uri);
+
+            return await HttpInvoker(origin, async (context) =>
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
+                SetAuthorizationHeader(requestMessage);
+                if (authorizationToken != null)
+                {
+                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(authorizationMethod, authorizationToken);
+                }
+
+                if (requestId != null)
+                {
+                    requestMessage.Headers.Add("x-requestid", requestId);
+                }
+
+                return await _client.SendAsync(requestMessage);
+            });
+        }
+
+        public async Task<HttpResponseMessage> PutAsync<T>(string uri, T item, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")
+        {
+            return await DoPostPutAsync(HttpMethod.Put, uri, item, authorizationToken, requestId, authorizationMethod);
         }
     }
 }

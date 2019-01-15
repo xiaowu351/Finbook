@@ -21,7 +21,7 @@ namespace Contact.API.Data
         /// <param name="userId">用户Id</param>
         /// <param name="contact"></param>
         /// <returns></returns>
-        public async Task<bool> AddContactInfoAsync(int userId, BaseUserInfo contact)
+        public async Task<bool> AddContactInfoAsync(int userId, UserIdentity contact)
         {
             if (_contactContext.ContactBooks.CountDocuments(c=>c.UserId == userId) == 0)
             {//若用户未创建通讯录，则新创建一个
@@ -40,7 +40,7 @@ namespace Contact.API.Data
         /// </summary>
         /// <param name="userInfo"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateContactInfoAsync(BaseUserInfo userInfo)
+        public async Task<bool> UpdateContactInfoAsync(UserIdentity userInfo)
         {
             //1.首先找到信息变更的用户通讯录
             var contactBook = await _contactContext.ContactBooks.Find(cb => cb.UserId == userInfo.UserId).SingleOrDefaultAsync();

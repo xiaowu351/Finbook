@@ -8,6 +8,6 @@ namespace Contact.API.Services
 {
     public interface IUserService
     {
-        Task<BaseUserInfo> GetUserInfoAsync(int userId);
+        Task<UserIdentity> GetBaseUserInfoAsync(int userId);
     }
 }

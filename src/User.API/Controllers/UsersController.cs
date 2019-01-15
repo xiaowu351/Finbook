@@ -17,12 +17,11 @@ namespace User.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         private AppUserContext _userContext;
         private ILogger<UsersController> _logger;
 
-        private UserIdentity UserIdentity => new UserIdentity { UserId = 1, Name = "test" };
 
         public UsersController(AppUserContext userContext, ILogger<UsersController> logger)
         {
@@ -98,7 +97,8 @@ namespace User.API.Controllers
                 _userContext.AppUsers.Add(new AppUser { Phone = viewModel.Phone, Name = viewModel.Phone });
                 await _userContext.SaveChangesAsync();
             }
-            return Ok(new {
+            return Ok(new
+            {
                 user.Id,
                 user.Name,
                 user.Company,
@@ -151,5 +151,26 @@ namespace User.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet("baseInfo/{userId}")]
+        public async Task<IActionResult> GetBaseUserInfo(int userId)
+        {
+            // TBD 检查用户是否好友关系
+
+            var user = await _userContext.AppUsers.Where(u => u.Id == userId).SingleOrDefaultAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(new
+            {
+                userId = user.Id,
+                user.Name,
+                user.Company,
+                user.Title,
+                user.Avatar
+            });
+        }
+
     }
 }

@@ -14,14 +14,14 @@ namespace Contact.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactsController : Controller
+    public class ContactsController : BaseController
     {
-        private UserIdentity UserIdentity => new UserIdentity { UserId = 1 };
+
 
         private IContactApplyRequestRepository _contactApplyRequestRepository;
         private IContactRepository _contactRepository;
         private IUserService _userService;
-        public ContactsController(IContactApplyRequestRepository contactApplyRequestRepository, 
+        public ContactsController(IContactApplyRequestRepository contactApplyRequestRepository,
             IUserService userService,
             IContactRepository contactRepository)
         {
@@ -74,12 +74,19 @@ namespace Contact.API.Controllers
         [HttpPost("apply-requests")]
         public async Task<IActionResult> AddApplyRequest([FromBody]AddApplyRequestInputViewModel viewModel)
         {
+
             var userId = viewModel.UserId;
-            if(UserIdentity.UserId == userId)
+            if (UserIdentity.UserId == userId)
             {
                 throw new ContactOperationException("不能向自己发送的好友请求");
             }
-            var baseUserInfo = await _userService.GetUserInfoAsync(userId);
+            var currentContacts = await _contactRepository.GetContactsAsync(UserIdentity.UserId);
+            if (currentContacts.Exists(c => c.UserId == userId))
+            {
+                throw new ContactOperationException($"{UserIdentity.UserId}跟{userId}已经是好友关系了，不需要重复添加！");
+            }
+
+            var baseUserInfo = await _userService.GetBaseUserInfoAsync(userId);
 
             if (baseUserInfo == null)
             {
@@ -101,17 +108,17 @@ namespace Contact.API.Controllers
             {
                 //log TBD
                 return BadRequest();
-            } 
+            }
             return Ok();
         }
 
-       /// <summary>
-       /// 通过好友的请求
-       /// </summary>
-       /// <param name="applierId">请求的好友ID</param>
-       /// <returns></returns>
+        /// <summary>
+        /// 通过好友的请求
+        /// </summary>
+        /// <param name="applierId">请求的好友ID</param>
+        /// <returns></returns>
         [HttpPut("apply-requests")]
-        public async Task<IActionResult> ApprovalApplyRequest([FromBody]ApprovalApplyRequestInputViewModel  viewModel)
+        public async Task<IActionResult> ApprovalApplyRequest([FromBody]ApprovalApplyRequestInputViewModel viewModel)
         {
             var applierId = viewModel.ApplierId;
             var result = await _contactApplyRequestRepository.ApprovalAsync(UserIdentity.UserId, applierId);
@@ -123,7 +130,7 @@ namespace Contact.API.Controllers
 
             //这里需要注意，添加好友请求的时候，需要完成双向的好友关系
             //1.完成自身的好友关系
-            var applier = await _userService.GetUserInfoAsync(applierId);
+            var applier = await _userService.GetBaseUserInfoAsync(applierId);
             var userResult = await _contactRepository.AddContactInfoAsync(UserIdentity.UserId, applier);
 
             if (!userResult)
@@ -133,7 +140,7 @@ namespace Contact.API.Controllers
             }
 
             //2.完成申请人的好友关系
-            var userInfo = await _userService.GetUserInfoAsync(UserIdentity.UserId);
+            var userInfo = await _userService.GetBaseUserInfoAsync(UserIdentity.UserId);
             var applierResult = await _contactRepository.AddContactInfoAsync(applierId, userInfo);
 
             if (!applierResult)

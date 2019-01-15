@@ -11,7 +11,7 @@
   "profiles": { 
     "Ocelot.API": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "api/values",
       "applicationUrl": "http://localhost",
       "environmentVariables": {

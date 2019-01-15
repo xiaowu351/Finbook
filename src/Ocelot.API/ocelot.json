@@ -6,7 +6,35 @@
       "DownstreamScheme": "http",
       "ServiceName": "UserService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
       "UpstreamPathTemplate": "/users",
-      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamHttpMethod": [ "Get", "Patch" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/tags",
+      "DownstreamScheme": "http",
+      "ServiceName": "UserService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "UpstreamPathTemplate": "/users/tags",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/search",
+      "DownstreamScheme": "http",
+      "ServiceName": "UserService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "UpstreamPathTemplate": "/users/search",
+      "UpstreamHttpMethod": [ "Post" ],
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
@@ -32,7 +60,35 @@
       "DownstreamScheme": "http",
       "ServiceName": "ContactService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
       "UpstreamPathTemplate": "/contacts/apply-requests",
-      "UpstreamHttpMethod": [ "Post" ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contacts",
+      "DownstreamScheme": "http",
+      "ServiceName": "ContactService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "UpstreamPathTemplate": "/contacts",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/contacts/tags",
+      "DownstreamScheme": "http",
+      "ServiceName": "ContactService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "UpstreamPathTemplate": "/contacts/tags",
+      "UpstreamHttpMethod": [ "Put" ],
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },

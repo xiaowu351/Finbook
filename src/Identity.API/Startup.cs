@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DnsClient;
 using Identity.API.Authentication;
+using Identity.API.Exceptions;
 using Identity.API.Infrastructure;
 using Identity.API.Services;
 using IdentityServer4.Services;
@@ -44,14 +45,18 @@ namespace Identity.API
 
             services.AddScoped<IProfileService, ProfileService>();
 
-            services.AddSingleton<IResilienceHttpClientFactory, ResilienceHttpClientFactory>(sp => {
-                var logger = sp.GetRequiredService<ILogger<ResilienceHttpClient>>();
-                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-                var retryCount = 6;
-                var exceptionsAllowedBeforeBreaking = 5;
-                return new ResilienceHttpClientFactory(logger,httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking);
-            });
-            services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp=> sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
+
+
+            //services.AddSingleton<IResilienceHttpClientFactory, ResilienceHttpClientFactory>(sp => {
+            //    var logger = sp.GetRequiredService<ILogger<ResilienceHttpClient>>();
+            //    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+            //    var retryCount = 6;
+            //    var exceptionsAllowedBeforeBreaking = 5;
+            //    return new ResilienceHttpClientFactory(logger,httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking);
+            //});
+            //services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp=> sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
+
+            services.AddResilienceHttpClient();
             //注册Consul服务配置
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
 

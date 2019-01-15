@@ -13,7 +13,7 @@ namespace Contact.API.Data
         /// </summary>
         /// <param name="userInfo"></param>
         /// <returns></returns>
-        Task<bool> UpdateContactInfoAsync(BaseUserInfo contact);
+        Task<bool> UpdateContactInfoAsync(UserIdentity contact);
 
         /// <summary>
         /// 添加联系人信息
@@ -21,7 +21,7 @@ namespace Contact.API.Data
         /// <param name="userId"></param>
         /// <param name="contact"></param>
         /// <returns></returns>
-        Task<bool> AddContactInfoAsync(int userId,BaseUserInfo contact);
+        Task<bool> AddContactInfoAsync(int userId, UserIdentity contact);
 
         /// <summary>
         /// 获取联系人列表

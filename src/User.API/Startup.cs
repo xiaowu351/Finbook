@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Consul;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceDiscovery.Consul;
 using User.API.Data;
-
+using System.IdentityModel.Tokens.Jwt;
 
 
 namespace User.API
@@ -31,7 +32,15 @@ namespace User.API
         public void ConfigureServices(IServiceCollection services)
         {
             
-            services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions))); 
+            services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            //注册身份认证服务使用Bearer方式
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options => {
+                        options.Audience = "user_api";
+                        options.Authority = "http://localhost:8000";
+                        options.RequireHttpsMetadata = false;
+                    });
 
             services.AddDbContext<AppUserContext>(options => options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
             services
@@ -47,6 +56,7 @@ namespace User.API
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseMvc();
             app.UseConsulRegisterService();
             AppUserContextSeed.SeedData(app, loggerFactory);

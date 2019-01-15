@@ -1,4 +1,5 @@
 ﻿using Contact.API.Dtos;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Contact.API.Models
     /// <summary>
     /// 联系人
     /// </summary>
+    [BsonIgnoreExtraElements]// 忽略Mongo系统字段objectId_id 
     public class Contact
     {
         public Contact()
@@ -16,7 +18,7 @@ namespace Contact.API.Models
             Tags = new List<string>();
         }
 
-        public Contact(BaseUserInfo userInfo):this()
+        public Contact(UserIdentity userInfo):this()
         {
             UserId = userInfo.UserId;
             Name = userInfo.Name;

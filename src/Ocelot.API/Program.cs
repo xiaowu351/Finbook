@@ -21,7 +21,7 @@ namespace Ocelot.API
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext,builder)=>{
                     builder.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-                           .AddJsonFile("Ocelot.json");
+                           .AddJsonFile("Ocelot.json",false,true);
                 })
                 .UseStartup<Startup>();
     }
