@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using User.API.Controllers;
 using User.API.Data;
+using User.API.IntegrationEvents;
 using User.API.Models;
 using Xunit;
 
@@ -35,8 +36,8 @@ namespace User.API.UnitTests
             var context = CreateDbContext();
             var loggerMoq = new Mock<ILogger<UsersController>>();
             var logger = loggerMoq.Object;
-
-            return (context, new UsersController(context, logger));
+            
+            return (context, new UsersController(context, logger,null));
         }
 
         private async Task UserPropertiesData(AppUserContext context)

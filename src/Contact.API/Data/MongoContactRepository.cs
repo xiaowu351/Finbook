@@ -63,10 +63,10 @@ namespace Contact.API.Data
             //3.定义更新的document
             var update = Builders<ContactBook>
                          .Update
-                         .Set($"{contactBook.Contacts}.$.{nameof(userInfo.Name)}", userInfo.Name)
-                         .Set($"{contactBook.Contacts}.$.{nameof(userInfo.Avatar)}", userInfo.Avatar)
-                         .Set($"{contactBook.Contacts}.$.{nameof(userInfo.Company)}", userInfo.Company)
-                         .Set($"{contactBook.Contacts}.$.{nameof(userInfo.Title)}", userInfo.Title);
+                         .Set($"{nameof(contactBook.Contacts)}.$.{nameof(userInfo.Name)}", userInfo.Name)
+                         .Set($"{nameof(contactBook.Contacts)}.$.{nameof(userInfo.Avatar)}", userInfo.Avatar)
+                         .Set($"{nameof(contactBook.Contacts)}.$.{nameof(userInfo.Company)}", userInfo.Company)
+                         .Set($"{nameof(contactBook.Contacts)}.$.{nameof(userInfo.Title)}", userInfo.Title);
 
             //4.执行批量更新
             var result = await  _contactContext.ContactBooks.UpdateManyAsync(filter, update);

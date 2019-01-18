@@ -76,7 +76,7 @@ namespace Identity.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseConsulRegisterService();
+            app.UseConsulRegisterService(env);
             app.UseIdentityServer(); 
             app.UseMvc();
         }

@@ -15,7 +15,8 @@ using Microsoft.Extensions.Options;
 using ServiceDiscovery.Consul;
 using User.API.Data;
 using System.IdentityModel.Tokens.Jwt;
-
+using User.API.IntegrationEvents;
+using User.API.Extensions;
 
 namespace User.API
 {
@@ -43,6 +44,10 @@ namespace User.API
                     });
 
             services.AddDbContext<AppUserContext>(options => options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
+
+            services.AddEventBus(Configuration);
+            services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
+
             services
                 .AddMvc(options => options.Filters.Add(typeof(GlobalExceptionFilter)))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -55,10 +60,10 @@ namespace User.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseAuthentication();
             app.UseMvc();
-            app.UseConsulRegisterService();
+            app.UseConsulRegisterService(env);
             AppUserContextSeed.SeedData(app, loggerFactory);
         } 
     }

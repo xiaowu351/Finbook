@@ -15,7 +15,7 @@ namespace ServiceDiscovery.Consul
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseConsulRegisterService(this IApplicationBuilder app)
+        public static IApplicationBuilder UseConsulRegisterService(this IApplicationBuilder app, IHostingEnvironment env)
         {
 
             var loggerFactory = app.ApplicationServices.GetService<ILoggerFactory>();
@@ -56,12 +56,19 @@ namespace ServiceDiscovery.Consul
                 if (!string.IsNullOrWhiteSpace(serviceDiscoveryOptions.HealthCheckTemplate))
                 {
                     var healthCheckUri = new Uri(address, serviceDiscoveryOptions.HealthCheckTemplate).OriginalString;
-                    serviceChecks.Add(new AgentServiceCheck()
+                    var serviceCheck =  new AgentServiceCheck()
                     {
                         DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1),
                         Interval = TimeSpan.FromSeconds(30),
                         HTTP = healthCheckUri
-                    });
+                    };
+                    if (env.IsDevelopment())
+                    {
+                        serviceCheck.DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(30);
+                        serviceCheck.Interval = TimeSpan.FromSeconds(30);
+                    }
+
+                    serviceChecks.Add(serviceCheck);
                     logger.LogInformation($"Adding healthcheck for service {serviceId},checking {healthCheckUri}");
 
 

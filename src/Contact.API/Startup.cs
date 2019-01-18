@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contact.API.Data;
 using Contact.API.Exceptions;
+using Contact.API.Extensions;
 using Contact.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -41,18 +42,18 @@ namespace Contact.API
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddResilienceHttpClient();
+            services.AddEventBus(Configuration);
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); 
+            services.AddResilienceHttpClient(); 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                
-                .AddJwtBearer(options =>
-                {
-                    
-                    options.Audience = "contact_api";
-                    options.Authority = "http://localhost:8000";
-                    options.RequireHttpsMetadata = false;
-                });
+                    .AddJwtBearer(options =>
+                    {
+
+                        options.Audience = "contact_api";
+                        options.Authority = "http://localhost:8000";
+                        options.RequireHttpsMetadata = false;
+                    });
 
             services.AddMvc(options => options.Filters.Add(typeof(GlobalExceptionFilter)))
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -65,9 +66,10 @@ namespace Contact.API
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            app.UseEventBus();
             app.UseAuthentication();
-            app.UseConsulRegisterService();
+            app.UseConsulRegisterService(env);
             app.UseMvc();
         }
     }

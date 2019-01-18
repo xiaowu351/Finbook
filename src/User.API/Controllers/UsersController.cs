@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using User.API.Models;
 using System.Collections;
 using User.API.ViewModels;
+using User.API.IntegrationEvents;
+using User.API.IntegrationEvents.Events;
 
 namespace User.API.Controllers
 {
@@ -21,14 +23,30 @@ namespace User.API.Controllers
     {
         private AppUserContext _userContext;
         private ILogger<UsersController> _logger;
+        private IUserIntegrationEventService _userIntegrationEventService;
 
 
-        public UsersController(AppUserContext userContext, ILogger<UsersController> logger)
+        public UsersController(AppUserContext userContext, 
+            ILogger<UsersController> logger,
+            IUserIntegrationEventService userIntegrationEventService)
         {
             _userContext = userContext;
             _logger = logger;
+            _userIntegrationEventService = userIntegrationEventService;
         }
 
+        private async Task PublishUserChangedEventBus(AppUser user)
+        {
+            if( _userContext.Entry(user).Property(u=>u.Name).IsModified ||
+                _userContext.Entry(user).Property(u => u.Title).IsModified ||
+                _userContext.Entry(user).Property(u => u.Company).IsModified || 
+                _userContext.Entry(user).Property(u => u.Avatar).IsModified)
+            {
+                var userChangeEvent = new UserInfoChangedIntegrationEvent(user);
+                await _userIntegrationEventService.PublishThroughEventBusAsync(userChangeEvent);
+            } 
+        }
+        
 
         // GET api/values
         [HttpGet]
@@ -78,6 +96,9 @@ namespace User.API.Controllers
             {
                 _userContext.UserProperties.Add(property);
             }
+
+            //把变更的信息同步发送EventBus
+            await PublishUserChangedEventBus(user);
 
             await _userContext.SaveChangesAsync();
 
