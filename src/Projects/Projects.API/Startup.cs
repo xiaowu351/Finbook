@@ -20,6 +20,8 @@ using Projects.Domain.AggregatesModel;
 using Projects.Infrastructure;
 using Projects.Infrastructure.Repositories;
 using ServiceDiscovery.Consul;
+using Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions;
+using Projects.API.Application.IntegrationEvents;
 
 namespace Projects.API
 {
@@ -48,7 +50,10 @@ namespace Projects.API
                 var connectionString = Configuration.GetConnectionString("MysqlProject");
                 return new ProjectQueries(connectionString);
             });
+            services.AddScoped<IProjectIntegrationEventService, ProjectIntegrationEventService>();
             services.AddMediatR();
+
+            services.AddEventBus();
 
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
 

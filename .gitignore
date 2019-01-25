@@ -60,3 +60,6 @@ src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
 /src/Projects/Projects.Domain/obj
 /src/Projects/Projects.Infrastructure/bin/Debug/netstandard2.0
 /src/Projects/Projects.Infrastructure/obj
+/src/Contact.API/bin/Debug/netcoreapp2.2
+/src/Contact.API/bin/Debug/netcoreapp2.2
+/src/User.API.UnitTests/obj/Debug/netcoreapp2.2

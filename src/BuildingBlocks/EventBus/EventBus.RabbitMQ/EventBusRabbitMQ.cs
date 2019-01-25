@@ -32,12 +32,11 @@ namespace Finbook.BuildingBlocks.EventBus.RabbitMQ
         private string _queueName;
 
         public EventBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
-            IServiceScope autofac, IEventBusSubscriptionsManager subsManager, string queueName = null, int retryCount = 5)
+            IServiceScope autofac, IEventBusSubscriptionsManager subsManager, int retryCount = 5)
         {
             _persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
-            _queueName = queueName;
+            _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager(); 
             _consumerChannel = CreateConsumerChannel();
             _autofac = autofac;
             _retryCount = retryCount;
@@ -130,9 +129,10 @@ namespace Finbook.BuildingBlocks.EventBus.RabbitMQ
                     _persistentConnection.TryConnect();
                 }
 
-                using (var channel = _persistentConnection.CreateModel())
+                //using (var channel = _persistentConnection.CreateModel())
                 {
-                    channel.QueueBind(queue: _queueName,
+                    
+                    _consumerChannel.QueueBind(queue: _queueName,
                                       exchange: BROKER_NAME,
                                       routingKey: eventName);
                 }
@@ -174,11 +174,13 @@ namespace Finbook.BuildingBlocks.EventBus.RabbitMQ
             channel.ExchangeDeclare(exchange: BROKER_NAME,
                                  type: ExchangeType.Direct);
 
-            channel.QueueDeclare(queue: _queueName,
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+            _queueName = channel.QueueDeclare().QueueName;
+            //改用临时Queue
+            //channel.QueueDeclare(queue: _queueName,
+            //                     durable: true,
+            //                     exclusive: false,
+            //                     autoDelete: false,
+            //                     arguments: null);
 
 
             var consumer = new EventingBasicConsumer(channel);

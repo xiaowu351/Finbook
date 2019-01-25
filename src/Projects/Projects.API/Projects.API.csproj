@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Application\DomainEventHandlers\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -18,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\ServiceDiscovery.Consul\ServiceDiscovery.Consul.csproj" />
     <ProjectReference Include="..\Projects.Domain\Projects.Domain.csproj" />
     <ProjectReference Include="..\Projects.Infrastructure\Projects.Infrastructure.csproj" />

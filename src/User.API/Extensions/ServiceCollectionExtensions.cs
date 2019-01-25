@@ -51,7 +51,7 @@ namespace User.API.Extensions
                         retryCount = int.Parse(configuration["EventBusRetryCount"]);
                     }
 
-                    return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, queueName, retryCount);
+                    return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, retryCount);
                 });
             }
 

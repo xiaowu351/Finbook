@@ -17,6 +17,7 @@ using User.API.Data;
 using System.IdentityModel.Tokens.Jwt;
 using User.API.IntegrationEvents;
 using User.API.Extensions;
+using Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions;
 
 namespace User.API
 {
@@ -45,7 +46,7 @@ namespace User.API
 
             services.AddDbContext<AppUserContext>(options => options.UseMySQL(Configuration.GetConnectionString("MysqlUser")));
 
-            services.AddEventBus(Configuration);
+            services.AddEventBus();
             services.AddScoped<IUserIntegrationEventService, UserIntegrationEventService>();
 
             services

@@ -17,6 +17,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceDiscovery.Consul;
+using Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions;
+using Contact.API.IntegrationEvents.Events;
+using Contact.API.IntegrationEvents.EventHandling;
 
 namespace Contact.API
 {
@@ -42,7 +45,8 @@ namespace Contact.API
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddEventBus(Configuration);
+            services.AddEventBus()
+                    .AddTransient<UserInfoChangedIntegrationEventHandler>();
 
             services.AddResilienceHttpClient(); 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -67,7 +71,10 @@ namespace Contact.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseEventBus();
+            app.UseEventBus(evtBus =>
+            {
+                evtBus.Subscribe<UserInfoChangedIntegrationEvent, UserInfoChangedIntegrationEventHandler>();
+            });
             app.UseAuthentication();
             app.UseConsulRegisterService(env);
             app.UseMvc();
