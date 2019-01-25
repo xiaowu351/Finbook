@@ -52,3 +52,11 @@ src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
 /src/MiscSamples/RabbitMQ/WorkQueue/NewTask/obj
 /src/MiscSamples/RabbitMQ/WorkQueue/Worker/bin/Debug/netcoreapp2.1
 /src/MiscSamples/RabbitMQ/WorkQueue/Worker/obj
+/src/MiscSamples/MediatR/CQRSSample/bin/Debug/netcoreapp2.1
+/src/MiscSamples/MediatR/CQRSSample/obj
+/src/Projects/Projects.API/bin/Debug/netcoreapp2.2
+/src/Projects/Projects.API/obj
+/src/Projects/Projects.Domain/bin/Debug/netstandard2.0
+/src/Projects/Projects.Domain/obj
+/src/Projects/Projects.Infrastructure/bin/Debug/netstandard2.0
+/src/Projects/Projects.Infrastructure/obj

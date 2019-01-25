@@ -86,8 +86,80 @@
     {
       "DownstreamPathTemplate": "/api/contacts/tags",
       "DownstreamScheme": "http",
-      "ServiceName": "ContactService", // 从Consul中查找已注册且Health的服务地址，根据"UserService"查找
+      "ServiceName": "ContactService", // 从Consul中查找已注册且Health的服务地址，根据"ContactService"查找
       "UpstreamPathTemplate": "/contacts/tags",
+      "UpstreamHttpMethod": [ "Put" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+
+    //Project.API
+    {
+      "DownstreamPathTemplate": "/api/projects",
+      "DownstreamScheme": "http",
+      "ServiceName": "ProjectService",
+      "UpstreamPathTemplate": "/projects",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/projects/my/{projectId}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ProjectService",
+      "UpstreamPathTemplate": "/projects/my/{projectId}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/projects/recommends/{projectId}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ProjectService",
+      "UpstreamPathTemplate": "/projects/recommends/{projectId}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/projects/view/{projectId}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ProjectService",
+      "UpstreamPathTemplate": "/projects/view/{projectId}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/projects/join/{projectId}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ProjectService",
+      "UpstreamPathTemplate": "/projects/join/{projectId}",
       "UpstreamHttpMethod": [ "Put" ],
       "LoadBalancerOptions": {
         "Type": "LeastConnection"

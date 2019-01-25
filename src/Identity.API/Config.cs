@@ -20,7 +20,8 @@ namespace Identity.API
             return new List<ApiResource> {
                 new ApiResource("gateway_api","Gateway API"),
                 new ApiResource("contact_api","Contact API"),
-                new ApiResource("user_api","Contact API")
+                new ApiResource("user_api","Contact API"),
+                new ApiResource("project_api","Project API")
             };
         }
 
@@ -46,7 +47,8 @@ namespace Identity.API
                         IdentityServerConstants.StandardScopes.OpenId,
                         "gateway_api", //Client拿到Token时，可以访问gateway_api的服务
                         "contact_api",
-                        "user_api"
+                        "user_api",
+                        "project_api"
                     },
                      AllowOfflineAccess = true, 
                      AlwaysIncludeUserClaimsInIdToken = true 
