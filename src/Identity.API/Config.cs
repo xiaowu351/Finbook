@@ -21,7 +21,8 @@ namespace Identity.API
                 new ApiResource("gateway_api","Gateway API"),
                 new ApiResource("contact_api","Contact API"),
                 new ApiResource("user_api","Contact API"),
-                new ApiResource("project_api","Project API")
+                new ApiResource("project_api","Project API"),
+                new ApiResource("projectrecommend_api","Project Recommend API")
             };
         }
 
@@ -48,7 +49,8 @@ namespace Identity.API
                         "gateway_api", //Client拿到Token时，可以访问gateway_api的服务
                         "contact_api",
                         "user_api",
-                        "project_api"
+                        "project_api",
+                        "projectrecommend_api"
                     },
                      AllowOfflineAccess = true, 
                      AlwaysIncludeUserClaimsInIdToken = true 

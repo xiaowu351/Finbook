@@ -30,12 +30,16 @@ namespace Projects.API.Application.DomainEventHandlers
         /// <returns></returns>
         public async Task Handle(ProjectCreatedDomainEvent notification, CancellationToken cancellationToken)
         {
-            var integrationEvent = new ProjectCreatedIntegrationEvent() {
+            var integrationEvent = new ProjectCreatedIntegrationEvent()
+            {
                 ProjectId = notification.Project.Id,
                 Company = notification.Project.Company,
                 Avatar = notification.Project.Avatar,
                 FromUserId = notification.Project.UserId,
-                Introduction = notification.Project.Introduction
+                Introduction = notification.Project.Introduction,
+                FinStage = notification.Project.FinStage,
+                Tags = notification.Project.Tags,
+                
             };
 
             await _projectIntegrationEventService.PublishThroughEventBusAsync(integrationEvent);

@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using Contact.API.Data;
-using Contact.API.Exceptions;
-using Contact.API.Extensions;
-using Contact.API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Recommend.API.Data;
 using ServiceDiscovery.Consul;
 using Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions;
-using Contact.API.IntegrationEvents.Events;
-using Contact.API.IntegrationEvents.EventHandling;
+using Recommend.API.IntegrationEvents.Events;
+using Recommend.API.IntegrationEvents.EventHandling;
+using Recommend.API.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
+using Recommend.API.Extensions;
 using Resilience.Http.DependencyInjection.Extensions;
 
-namespace Contact.API
+namespace Recommend.API
 {
     public class Startup
     {
@@ -36,32 +36,32 @@ namespace Contact.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ProjectRecommendContext>(options => {
+                options.UseMySQL(Configuration.GetConnectionString("MysqlProjectRecommend"));
+            }); 
+
             services.Configure<DependencyServiceDiscoverySettings>(Configuration.GetSection(nameof(DependencyServiceDiscoverySettings)));
 
-            services.Configure<AppSettings>(Configuration);
-            services.AddScoped(typeof(ContactContext));
-            services.AddScoped<IContactApplyRequestRepository, MongoContactApplyRequestRepository>();
-            services.AddScoped<IContactRepository, MongoContactRepository>();
-            services.AddScoped<IUserService, UserService>();
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
+            
+            services.AddTransient<ProjectCreatedIntegrationEventHandler>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddResilienceHttpClient();
 
-            services.AddEventBus()
-                    .AddTransient<UserInfoChangedIntegrationEventHandler>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IContactService, ContactService>();
+            
+            services.AddEventBus();
 
-            services.AddResilienceHttpClient(); 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-
-                        options.Audience = "contact_api";
+                    .AddJwtBearer(options => {
+                        options.Audience = "projectrecommend_api";
                         options.Authority = "http://localhost:8000";
                         options.RequireHttpsMetadata = false;
                     });
 
-            services.AddMvc(options => options.Filters.Add(typeof(GlobalExceptionFilter)))
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,14 +71,12 @@ namespace Contact.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseEventBus(evtBus =>
-            {
-                evtBus.Subscribe<UserInfoChangedIntegrationEvent, UserInfoChangedIntegrationEventHandler>();
-            });
             app.UseAuthentication();
-            app.UseConsulRegisterService(env);
             app.UseMvc();
+            app.UseEventBus(evtBus => {
+                evtBus.Subscribe<ProjectCreatedIntegrationEvent, ProjectCreatedIntegrationEventHandler>();
+            });
+            app.UseConsulRegisterService(env);
         }
     }
 }

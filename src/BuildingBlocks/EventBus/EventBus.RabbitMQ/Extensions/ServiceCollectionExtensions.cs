@@ -18,6 +18,7 @@ namespace Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions
         /// 注册EventBus依赖项
         /// publish时不需要调用 UseEventBus扩展方法注册订阅
         /// subscribute时调用 UseEventBus扩展方法注册定义
+        /// 注意：由于内部调用CreateScope方法，故建议最后注册此依赖
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>

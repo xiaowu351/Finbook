@@ -63,3 +63,9 @@ src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
 /src/Contact.API/bin/Debug/netcoreapp2.2
 /src/Contact.API/bin/Debug/netcoreapp2.2
 /src/User.API.UnitTests/obj/Debug/netcoreapp2.2
+/src/BuildingBlocks/Resilience/Resilience.Http/bin/Debug/netstandard2.0
+/src/BuildingBlocks/Resilience/Resilience.Http.DependencyInjection/bin/Debug/netstandard2.0
+/src/BuildingBlocks/Resilience/Resilience.Http.DependencyInjection/obj
+/src/Recommend.API/bin/Debug/netcoreapp2.2
+/src/Recommend.API/obj
+/src/User.API.UnitTests/bin/Debug/netcoreapp2.2

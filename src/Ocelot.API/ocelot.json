@@ -168,6 +168,20 @@
         "AuthenticationProviderKey": "finbookKey",
         "AllowedScopes": []
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/projectrecommend",
+      "DownstreamScheme": "http",
+      "ServiceName": "ProjectRecommendService",
+      "UpstreamPathTemplate": "/projectrecommend",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": { //启用身份验证
+        "AuthenticationProviderKey": "finbookKey",
+        "AllowedScopes": []
+      }
     }
 
   ],

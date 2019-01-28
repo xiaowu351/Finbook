@@ -73,15 +73,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPCClient", "src\MiscSample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediatR", "MediatR", "{F6629A38-0B98-4848-936F-83601567DBB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQRSSample", "src\MiscSamples\MediatR\CQRSSample\CQRSSample.csproj", "{150FB091-1228-457C-BCCF-DC284F05FA31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQRSSample", "src\MiscSamples\MediatR\CQRSSample\CQRSSample.csproj", "{150FB091-1228-457C-BCCF-DC284F05FA31}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{66C1980A-5ECA-42A5-914B-833BEE4F6807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.API", "src\Projects\Projects.API\Projects.API.csproj", "{9C678BF9-6D67-4D5E-B631-30AD4F72C444}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Projects.API", "src\Projects\Projects.API\Projects.API.csproj", "{9C678BF9-6D67-4D5E-B631-30AD4F72C444}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Domain", "src\Projects\Projects.Domain\Projects.Domain.csproj", "{9FD3F1FA-E2AD-436F-8E8B-32936E90483E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Projects.Domain", "src\Projects\Projects.Domain\Projects.Domain.csproj", "{9FD3F1FA-E2AD-436F-8E8B-32936E90483E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Infrastructure", "src\Projects\Projects.Infrastructure\Projects.Infrastructure.csproj", "{A814B52D-BAD4-4782-B039-4232646DC599}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Projects.Infrastructure", "src\Projects\Projects.Infrastructure\Projects.Infrastructure.csproj", "{A814B52D-BAD4-4782-B039-4232646DC599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recommend.API", "src\Recommend.API\Recommend.API.csproj", "{9F1E19DB-6683-4096-9907-D4AA25F32DE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resilience.Http.DependencyInjection", "src\BuildingBlocks\Resilience\Resilience.Http.DependencyInjection\Resilience.Http.DependencyInjection.csproj", "{589D9FFB-F094-463D-A571-A899A3E2FAFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -189,6 +193,14 @@ Global
 		{A814B52D-BAD4-4782-B039-4232646DC599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A814B52D-BAD4-4782-B039-4232646DC599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A814B52D-BAD4-4782-B039-4232646DC599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F1E19DB-6683-4096-9907-D4AA25F32DE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F1E19DB-6683-4096-9907-D4AA25F32DE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F1E19DB-6683-4096-9907-D4AA25F32DE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F1E19DB-6683-4096-9907-D4AA25F32DE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{589D9FFB-F094-463D-A571-A899A3E2FAFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{589D9FFB-F094-463D-A571-A899A3E2FAFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{589D9FFB-F094-463D-A571-A899A3E2FAFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{589D9FFB-F094-463D-A571-A899A3E2FAFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -226,6 +238,7 @@ Global
 		{9C678BF9-6D67-4D5E-B631-30AD4F72C444} = {66C1980A-5ECA-42A5-914B-833BEE4F6807}
 		{9FD3F1FA-E2AD-436F-8E8B-32936E90483E} = {66C1980A-5ECA-42A5-914B-833BEE4F6807}
 		{A814B52D-BAD4-4782-B039-4232646DC599} = {66C1980A-5ECA-42A5-914B-833BEE4F6807}
+		{589D9FFB-F094-463D-A571-A899A3E2FAFD} = {A5E162E8-BC5E-4FBC-ADEA-49226A347D9C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F453631-B0F3-4C5F-8E9A-F1279EE282AD}

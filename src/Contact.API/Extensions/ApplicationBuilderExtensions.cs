@@ -13,17 +13,17 @@ namespace Contact.API.Extensions
     public static class ApplicationBuilderExtensions
     {
 
-        /// <summary>
-        /// 注册订阅EventBus相关处理类
-        /// </summary>
-        /// <param name="app"></param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseEventBus(this IApplicationBuilder app)
-        {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<UserInfoChangedIntegrationEvent, UserInfoChangedIntegrationEventHandler>();
+        ///// <summary>
+        ///// 注册订阅EventBus相关处理类
+        ///// </summary>
+        ///// <param name="app"></param>
+        ///// <returns></returns>
+        //public static IApplicationBuilder UseEventBus(this IApplicationBuilder app)
+        //{
+        //    var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+        //    eventBus.Subscribe<UserInfoChangedIntegrationEvent, UserInfoChangedIntegrationEventHandler>();
 
-            return app;
-        }
+        //    return app;
+        //}
     }
 }

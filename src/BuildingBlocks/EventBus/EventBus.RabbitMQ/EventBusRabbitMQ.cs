@@ -129,10 +129,10 @@ namespace Finbook.BuildingBlocks.EventBus.RabbitMQ
                     _persistentConnection.TryConnect();
                 }
 
-                //using (var channel = _persistentConnection.CreateModel())
+                using (var channel = _persistentConnection.CreateModel())
                 {
-                    
-                    _consumerChannel.QueueBind(queue: _queueName,
+
+                    channel.QueueBind(queue: _queueName,
                                       exchange: BROKER_NAME,
                                       routingKey: eventName);
                 }

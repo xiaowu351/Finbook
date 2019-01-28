@@ -40,6 +40,16 @@ namespace Contact.API.Controllers
         }
 
         /// <summary>
+        /// 获取联系人列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetContactsByUserId(int userId)
+        {
+            return Ok(await _contactRepository.GetContactsAsync(userId));
+        }
+
+        /// <summary>
         /// 获取好友申请列表
         /// </summary>
         /// <returns></returns>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Projects.API.Application.IntegrationEvents.Events
+namespace Recommend.API.IntegrationEvents.Events
 {
     public class ProjectCreatedIntegrationEvent:IntegrationEvent
     {
@@ -36,5 +36,6 @@ namespace Projects.API.Application.IntegrationEvents.Events
         /// 融资阶段
         /// </summary>
         public string FinStage { get; set; }
+
     }
 }
