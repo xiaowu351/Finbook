@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Resilience.Http;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 
 namespace Resilience.Http.DependencyInjection.Extensions
@@ -18,14 +19,20 @@ namespace Resilience.Http.DependencyInjection.Extensions
         /// <param name="retryCount">重试次数</param>
         /// <param name="exceptionsAllowedBeforeBreaking">在发生了exceptionsAllowedBeforeBreaking次数时，熔断打开</param>
         /// <returns></returns>
-        public static IServiceCollection AddResilienceHttpClient(this IServiceCollection services,int retryCount=6,int exceptionsAllowedBeforeBreaking=5)
+        public static IServiceCollection AddResilienceHttpClient(this IServiceCollection services,string serviceName=null,int retryCount=6,int exceptionsAllowedBeforeBreaking=5)
         {
              
             services.AddSingleton<IResilienceHttpClientFactory, ResilienceHttpClientFactory>(sp => {
                 var logger = sp.GetRequiredService<ILogger<ResilienceHttpClient>>();
-                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>(); 
+                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                var httpFactory = sp.GetRequiredService<IHttpClientFactory>();
+                Func<HttpClient> httpClientCreator = () => new HttpClient();
+                if (!string.IsNullOrWhiteSpace(serviceName)) 
+                {
+                    httpClientCreator = () => httpFactory.CreateClient(serviceName); 
+                }
                  
-                return new ResilienceHttpClientFactory(logger, httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking);
+                return new ResilienceHttpClientFactory(logger, httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking, httpClientCreator);
             });
             services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp => sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
 

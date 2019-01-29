@@ -12,23 +12,28 @@ namespace Resilience.Http.DependencyInjection
 {
     public class ResilienceHttpClientFactory : IResilienceHttpClientFactory
     {
-
+        private readonly Func<HttpClient> _httpCreator;
         private readonly ILogger<ResilienceHttpClient> _logger;
         private readonly int _retryCount;
         private readonly int _exceptionsAllowedBeforeBreaking;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ResilienceHttpClientFactory(ILogger<ResilienceHttpClient> logger, IHttpContextAccessor httpContextAccessor, int retryCount, int exceptionsAllowedBeforeBreaking)
+        public ResilienceHttpClientFactory(ILogger<ResilienceHttpClient> logger,
+            IHttpContextAccessor httpContextAccessor,
+            int retryCount, 
+            int exceptionsAllowedBeforeBreaking,
+            Func<HttpClient> httpCreator)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _retryCount = retryCount;
+            _httpCreator = httpCreator;
             _exceptionsAllowedBeforeBreaking = exceptionsAllowedBeforeBreaking;
         }
 
         public ResilienceHttpClient CreateResilienceHttpClient()
-        {
-            return new ResilienceHttpClient(origin => CreatePolicies(), _logger, _httpContextAccessor);
+        { 
+            return new ResilienceHttpClient(origin => CreatePolicies(), _logger, _httpContextAccessor, _httpCreator);
         }
 
         private IEnumerable<Policy> CreatePolicies()

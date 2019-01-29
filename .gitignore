@@ -69,3 +69,6 @@ src/User.API.UnitTests/obj/User.API.UnitTests.csproj.nuget.g.targets
 /src/Recommend.API/bin/Debug/netcoreapp2.2
 /src/Recommend.API/obj
 /src/User.API.UnitTests/bin/Debug/netcoreapp2.2
+/src/BuildingBlocks/Zipkin/Zipkin.Extensions/bin/Debug/netstandard2.0
+/src/BuildingBlocks/Zipkin/Zipkin.Extensions/obj
+/src/Identity.API/bin/Debug/netcoreapp2.2

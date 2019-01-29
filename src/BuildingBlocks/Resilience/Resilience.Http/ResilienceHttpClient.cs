@@ -22,15 +22,20 @@ namespace Resilience.Http
     /// </summary>
     public class ResilienceHttpClient : IHttpClient
     {
+        
+         
         private readonly HttpClient _client;
         private readonly Func<string, IEnumerable<Policy>> _policyCreator;
         private readonly ILogger<ResilienceHttpClient> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ConcurrentDictionary<string, PolicyWrap> _policyWrappers;
 
-        public ResilienceHttpClient(Func<string, IEnumerable<Policy>> policyCreator, ILogger<ResilienceHttpClient> logger,IHttpContextAccessor httpContextAccessor)
+        public ResilienceHttpClient(Func<string, IEnumerable<Policy>> policyCreator,
+            ILogger<ResilienceHttpClient> logger,
+            IHttpContextAccessor httpContextAccessor,
+            Func<HttpClient> httpCreator)
         {
-            _client = new HttpClient();
+            _client = httpCreator();  //new HttpClient();
             _logger = logger;
             _policyCreator = policyCreator;
             _httpContextAccessor = httpContextAccessor;

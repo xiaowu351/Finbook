@@ -5,8 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DnsClient;
 using Identity.API.Authentication;
-using Identity.API.Exceptions;
-using Identity.API.Infrastructure;
+using Identity.API.Exceptions; 
 using Identity.API.Services;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
@@ -19,6 +18,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resilience.Http;
 using ServiceDiscovery.Consul;
+using zipkin4net;
+using zipkin4net.Middleware;
+using zipkin4net.Tracers.Zipkin;
+using zipkin4net.Transport.Http;
+using Resilience.Http.DependencyInjection.Extensions;
+using Zipkin.Extensions;
 
 namespace Identity.API
 {
@@ -43,22 +48,18 @@ namespace Identity.API
                     .AddInMemoryClients(Config.GetClients())
                     .AddInMemoryIdentityResources(Config.GetIdentityResources());
 
-            services.AddScoped<IProfileService, ProfileService>();
-
-
-
-            //services.AddSingleton<IResilienceHttpClientFactory, ResilienceHttpClientFactory>(sp => {
-            //    var logger = sp.GetRequiredService<ILogger<ResilienceHttpClient>>();
-            //    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-            //    var retryCount = 6;
-            //    var exceptionsAllowedBeforeBreaking = 5;
-            //    return new ResilienceHttpClientFactory(logger,httpContextAccessor, retryCount, exceptionsAllowedBeforeBreaking);
-            //});
-            //services.AddSingleton<IHttpClient, ResilienceHttpClient>(sp=> sp.GetService<IResilienceHttpClientFactory>().CreateResilienceHttpClient());
-
-            services.AddResilienceHttpClient();
+            services.AddScoped<IProfileService, ProfileService>(); 
+            
             //注册Consul服务配置
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
+
+            //定义HttpClient创建使用的Handler,以便Zipkin收集跟踪日志
+            //var applicationName = "IdentityAPI"; //Configuration["applicationName"];
+            //services.AddHttpClient(applicationName)
+            //        .AddHttpMessageHandler(sp => TracingHandler.WithoutInnerHandler(applicationName));
+            //services.AddResilienceHttpClient(applicationName);
+
+            services.AddZipkin(Configuration.GetSection(nameof(ZipkinOptions)));
 
             services.AddScoped<IAuthCodeService, SmsAuthCodeServie>()
                     .AddScoped<IUserService, UserService>();
@@ -69,16 +70,22 @@ namespace Identity.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            IApplicationLifetime lifetime,
+            ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            //UseZipkin(lifetime, loggerFactory);
+            //app.UseTracing("IdentityAPI");//Configuration["applicationName"]);
+
+            app.UseZipkin(); 
             app.UseConsulRegisterService(env);
             app.UseIdentityServer(); 
             app.UseMvc();
-        }
+        } 
     }
 }
