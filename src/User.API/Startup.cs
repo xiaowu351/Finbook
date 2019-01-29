@@ -37,10 +37,10 @@ namespace User.API
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        { 
-
+        {
+            //注册Consul服务配置
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
-
+            //   注册分布式追踪埋点 zipkin
             services.AddZipkin(Configuration.GetSection(nameof(ZipkinOptions)));
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -71,9 +71,7 @@ namespace User.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            //UseZipkin(lifetime, loggerFactory);
-            //app.UseTracing(Configuration["applicationName"]);
+            } 
 
             app.UseZipkin();
             app.UseAuthentication();

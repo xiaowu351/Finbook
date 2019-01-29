@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using Recommend.API.Extensions;
 using Resilience.Http.DependencyInjection.Extensions;
+using Zipkin.Extensions;
 
 namespace Recommend.API
 {
@@ -43,10 +44,10 @@ namespace Recommend.API
             services.Configure<DependencyServiceDiscoverySettings>(Configuration.GetSection(nameof(DependencyServiceDiscoverySettings)));
 
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
-            
+            services.AddZipkin(Configuration.GetSection(nameof(ZipkinOptions)));
             services.AddTransient<ProjectCreatedIntegrationEventHandler>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddResilienceHttpClient();
+            //services.AddResilienceHttpClient();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IContactService, ContactService>();
@@ -71,6 +72,7 @@ namespace Recommend.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseZipkin();
             app.UseAuthentication();
             app.UseMvc();
             app.UseEventBus(evtBus => {

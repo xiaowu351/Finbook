@@ -17,6 +17,7 @@
     <ProjectReference Include="..\BuildingBlocks\Resilience\Resilience.Http.DependencyInjection\Resilience.Http.DependencyInjection.csproj" />
     <ProjectReference Include="..\BuildingBlocks\Resilience\Resilience.Http\Resilience.Http.csproj" />
     <ProjectReference Include="..\BuildingBlocks\ServiceDiscovery.Consul\ServiceDiscovery.Consul.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\Zipkin\Zipkin.Extensions\Zipkin.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -52,13 +52,7 @@ namespace Identity.API
             
             //注册Consul服务配置
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
-
-            //定义HttpClient创建使用的Handler,以便Zipkin收集跟踪日志
-            //var applicationName = "IdentityAPI"; //Configuration["applicationName"];
-            //services.AddHttpClient(applicationName)
-            //        .AddHttpMessageHandler(sp => TracingHandler.WithoutInnerHandler(applicationName));
-            //services.AddResilienceHttpClient(applicationName);
-
+            //  注册分布式追踪埋点 zipkin
             services.AddZipkin(Configuration.GetSection(nameof(ZipkinOptions)));
 
             services.AddScoped<IAuthCodeService, SmsAuthCodeServie>()
@@ -77,11 +71,7 @@ namespace Identity.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-
-            //UseZipkin(lifetime, loggerFactory);
-            //app.UseTracing("IdentityAPI");//Configuration["applicationName"]);
-
+            }  
             app.UseZipkin(); 
             app.UseConsulRegisterService(env);
             app.UseIdentityServer(); 

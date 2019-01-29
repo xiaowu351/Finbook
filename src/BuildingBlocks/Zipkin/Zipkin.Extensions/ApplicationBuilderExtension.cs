@@ -14,7 +14,7 @@ namespace Zipkin.Extensions
     public static class ApplicationBuilderExtension
     {
         /// <summary>
-        /// 注册Zipkin
+        /// 注册分布式追踪埋点 zipkin
         /// </summary>
         /// <param name="lifetime"></param>
         /// <param name="loggerFactory"></param>
@@ -32,9 +32,7 @@ namespace Zipkin.Extensions
                 var tracer = new ZipkinTracer(httpSender, new JSONSpanSerializer());
                 TraceManager.RegisterTracer(tracer);
                 TraceManager.Start(logger);
-            });
-
-
+            }); 
 
             lifetime.ApplicationStopped.Register(() => {
                 TraceManager.Stop();

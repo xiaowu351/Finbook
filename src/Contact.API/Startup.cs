@@ -21,6 +21,7 @@ using Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions;
 using Contact.API.IntegrationEvents.Events;
 using Contact.API.IntegrationEvents.EventHandling;
 using Resilience.Http.DependencyInjection.Extensions;
+using Zipkin.Extensions;
 
 namespace Contact.API
 {
@@ -37,6 +38,7 @@ namespace Contact.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<DependencyServiceDiscoverySettings>(Configuration.GetSection(nameof(DependencyServiceDiscoverySettings)));
+            services.AddZipkin(Configuration.GetSection(nameof(ZipkinOptions)));
 
             services.Configure<AppSettings>(Configuration);
             services.AddScoped(typeof(ContactContext));
@@ -49,7 +51,7 @@ namespace Contact.API
             services.AddEventBus()
                     .AddTransient<UserInfoChangedIntegrationEventHandler>();
 
-            services.AddResilienceHttpClient(); 
+            //services.AddResilienceHttpClient(); 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
@@ -76,6 +78,7 @@ namespace Contact.API
             {
                 evtBus.Subscribe<UserInfoChangedIntegrationEvent, UserInfoChangedIntegrationEventHandler>();
             });
+            app.UseZipkin();
             app.UseAuthentication();
             app.UseConsulRegisterService(env);
             app.UseMvc();

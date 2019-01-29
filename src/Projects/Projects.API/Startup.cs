@@ -22,6 +22,7 @@ using Projects.Infrastructure.Repositories;
 using ServiceDiscovery.Consul;
 using Finbook.BuildingBlocks.EventBus.RabbitMQ.Extensions;
 using Projects.API.Application.IntegrationEvents;
+using Zipkin.Extensions;
 
 namespace Projects.API
 {
@@ -56,7 +57,7 @@ namespace Projects.API
             services.AddEventBus();
 
             services.AddConsulServiceDiscovery(Configuration.GetSection(nameof(ServiceDiscoveryOptions)));
-
+            services.AddZipkin(Configuration.GetSection(nameof(ZipkinOptions)));
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options => {
@@ -75,6 +76,7 @@ namespace Projects.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseZipkin();
             app.UseAuthentication();
             app.UseMvc();
             app.UseConsulRegisterService(env);

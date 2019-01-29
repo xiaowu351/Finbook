@@ -11,6 +11,12 @@ namespace Zipkin.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// 注册分布式追踪埋点配置 zipkin
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddZipkin(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions();

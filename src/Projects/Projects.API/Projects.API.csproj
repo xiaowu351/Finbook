@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\ServiceDiscovery.Consul\ServiceDiscovery.Consul.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Zipkin\Zipkin.Extensions\Zipkin.Extensions.csproj" />
     <ProjectReference Include="..\Projects.Domain\Projects.Domain.csproj" />
     <ProjectReference Include="..\Projects.Infrastructure\Projects.Infrastructure.csproj" />
   </ItemGroup>
